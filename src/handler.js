@@ -178,4 +178,115 @@ const readAllBooks = (req, res) => {
   return response;
 };
 
-module.exports = { createBook, readAllBooks };
+// read book by id
+const readBookById = (req, res) => {
+  const { bookId } = req.params;
+  const findBookById = book.filter((b) => b.id === bookId);
+  if (findBookById.length > 0) {
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil ditampilkan',
+      data: {
+        bookId: findBookById[0],
+      },
+    });
+    response.code(200);
+    return response;
+  }
+  const response = res.response({
+    status: 'fail',
+    message: 'Buku tidak ditemukan',
+  });
+  response.code(404);
+  return response;
+};
+
+// Update book
+const updateBook = (req, res) => {
+  const { bookId } = req.params;
+  const {
+    name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+  } = req.payload;
+  const findBookById = book.filter((b) => b.id === bookId);
+  if (findBookById.length > 0) {
+    const updatedAt = new Date().toISOString();
+    const updatedBook = {
+      id: bookId,
+      name,
+      year,
+      author,
+      summary,
+      publisher,
+      pageCount,
+      readPage,
+      finished,
+      reading,
+      updatedAt,
+    };
+    // validate name required
+    if (!name) {
+      const response = res.response({
+        status: 'fail',
+        message: 'Gagal memperbarui buku. Mohon isi nama buku',
+      });
+      response.code(400);
+      return response;
+    }
+    // validate readPage > pageCount
+    if (readPage > pageCount) {
+      const response = res.response({
+        status: 'fail',
+        message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
+      });
+      response.code(400);
+      return response;
+    }
+    const index = book.findIndex((b) => b.id === bookId);
+    book[index] = updatedBook;
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil diperbarui',
+      data: {
+        bookId: updatedBook.id,
+      },
+    });
+    response.code(200);
+    return response;
+  }
+  const response = res.response({
+    status: 'fail',
+    message: 'Gagal memperbarui buku. Id tidak ditemukan',
+  });
+  response.code(404);
+  return response;
+};
+
+// Delete book
+const deleteBook = (req, res) => {
+  const { bookId } = req.params;
+  const findBookById = book.filter((b) => b.id === bookId);
+  if (findBookById.length > 0) {
+    const index = book.findIndex((b) => b.id === bookId);
+    book.splice(index, 1);
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil dihapus',
+    });
+    response.code(200);
+    return response;
+  }
+  const response = res.response({
+    status: 'fail',
+    message: 'Gagal menghapus buku. Id tidak ditemukan',
+  });
+  response.code(404);
+  return response;
+};
+
+module.exports = {
+  createBook,
+  readAllBooks,
+  readBookById,
+  updateBook,
+  deleteBook,
+};

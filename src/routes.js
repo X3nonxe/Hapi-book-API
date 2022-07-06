@@ -1,5 +1,7 @@
 // create routing for the app
-const { createBook, readAllBooks } = require('./handler');
+const {
+  createBook, readAllBooks, readBookById, updateBook, deleteBook,
+} = require('./handler');
 
 const routes = [
   {
@@ -12,6 +14,21 @@ const routes = [
     // query params
     path: '/books',
     handler: readAllBooks,
+  },
+  {
+    method: 'GET',
+    path: '/books/{bookId}',
+    handler: readBookById,
+  },
+  {
+    method: 'PUT',
+    path: '/books/{bookId}',
+    handler: updateBook,
+  },
+  {
+    method: 'DELETE',
+    path: '/books/{bookId}',
+    handler: deleteBook,
   },
 ];
 

@@ -27,8 +27,6 @@ const createBook = (req, res) => {
     insertedAt,
     updatedAt,
   };
-  book.push(newBook);
-
   // validate name required
   if (!name) {
     const response = res.response({
@@ -48,6 +46,7 @@ const createBook = (req, res) => {
     response.code(400);
     return response;
   }
+  book.push(newBook);
 
   // validate is book success to creted
   const successAdd = book.filter((b) => b.id === id).length > 0;
@@ -74,104 +73,10 @@ const createBook = (req, res) => {
 
 // Read all books
 const readAllBooks = (req, res) => {
-  // filter by name
-  const { name, reading, finished } = req.query;
-  if (name) {
-    const bookName = book.filter((b) => b.name.toLowerCase().includes(name.toLowerCase()));
-    const response = res.response({
-      status: 'success',
-      message: 'Buku berhasil ditampilkan',
-      data: {
-        books: bookName.map((b) => ({
-          id: b.id,
-          name: b.name,
-          publisher: b.publisher,
-        })),
-      },
-    });
-    response.code(200);
-    return response;
-  }
-  // filter by finished
-  // if finished == 1
-  if (Number(finished) === 1) {
-    const bookFinished = book.filter((b) => b.finished === true);
-    const response = res.response({
-      status: 'success',
-      message: 'Buku berhasil ditampilkan',
-      data: {
-        books: bookFinished.map((b) => ({
-          id: b.id,
-          name: b.name,
-          publisher: b.publisher,
-        })),
-      },
-    });
-    response.code(200);
-    return response;
-  }
-  // if finished == 0
-  if (Number(finished) === 0) {
-    const bookFinished = book.filter((b) => b.finished === false);
-    const response = res.response({
-      status: 'success',
-      message: 'Buku berhasil ditampilkan',
-      data: {
-        books: bookFinished.map((b) => ({
-          id: b.id,
-          name: b.name,
-          publisher: b.publisher,
-        })),
-      },
-    });
-    response.code(200);
-    return response;
-  }
-  // filter by reading
-  // query param reading == 1
-  if (Number(reading) === 1) {
-    const bookReading = book.filter((b) => b.reading === true);
-    const response = res.response({
-      status: 'success',
-      message: 'Buku berhasil ditampilkan',
-      data: {
-        books: bookReading.map((b) => ({
-          id: b.id,
-          name: b.name,
-          publisher: b.publisher,
-        })),
-      },
-    });
-    response.code(200);
-    return response;
-  }
-  // query param reading == 0
-  if (Number(reading) === 0) {
-    const bookReading = book.filter((b) => b.reading === false);
-    const response = res.response({
-      status: 'success',
-      message: 'Buku berhasil ditampilkan',
-      data: {
-        books: bookReading.map((b) => ({
-          id: b.id,
-          name: b.name,
-          publisher: b.publisher,
-        })),
-      },
-    });
-    response.code(200);
-    return response;
-  }
   const response = res.response({
     status: 'success',
-    message: 'Buku berhasil ditampilkan',
     data: {
-      // display some information about the books
-      books: book.map((b) => ({
-        id: b.id,
-        name: b.name,
-        publisher: b.publisher,
-      })),
+      books: book.map((item) => ({ id: item.id, name: item.name, publisher: item.publisher })),
     },
   });
   response.code(200);
@@ -187,7 +92,7 @@ const readBookById = (req, res) => {
       status: 'success',
       message: 'Buku berhasil ditampilkan',
       data: {
-        bookId: findBookById[0],
+        book: findBookById[0],
       },
     });
     response.code(200);
@@ -205,11 +110,13 @@ const readBookById = (req, res) => {
 const updateBook = (req, res) => {
   const { bookId } = req.params;
   const {
-    name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+    name, year, author, summary, publisher, pageCount, readPage, reading,
   } = req.payload;
   const findBookById = book.filter((b) => b.id === bookId);
   if (findBookById.length > 0) {
     const updatedAt = new Date().toISOString();
+    const finished = Boolean(readPage === pageCount);
+    const insertedAt = new Date().toISOString();
     const updatedBook = {
       id: bookId,
       name,
@@ -222,6 +129,7 @@ const updateBook = (req, res) => {
       finished,
       reading,
       updatedAt,
+      insertedAt,
     };
     // validate name required
     if (!name) {
@@ -277,7 +185,7 @@ const deleteBook = (req, res) => {
   }
   const response = res.response({
     status: 'fail',
-    message: 'Gagal menghapus buku. Id tidak ditemukan',
+    message: 'Buku gagal dihapus. Id tidak ditemukan',
   });
   response.code(404);
   return response;

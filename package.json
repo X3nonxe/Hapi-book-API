@@ -7,7 +7,7 @@
     "start": "nodemon ./src/servers.js",
     "lint": "eslint ./src --fix && eslint ./migrations --fix"
   },
-  "author": "",
+  "author": "AHMAD TAUFIQ ROHMAN",
   "license": "ISC",
   "dependencies": {
     "@hapi/hapi": "^20.2.2",

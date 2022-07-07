@@ -73,6 +73,76 @@ const createBook = (req, res) => {
 
 // Read all books
 const readAllBooks = (req, res) => {
+  const { name, reading, finished } = req.query;
+  const bookReading = Number(reading);
+  const bookFinished = Number(finished);
+  // read books by name
+  const findBooksByName = book.filter((b) => b.name === name);
+  if (findBooksByName.length > 0) {
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil ditampilkan',
+      data: {
+        books: findBooksByName.map((b) => ({ id: b.id, name: b.name, publisher: b.publisher })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+  // read books by reading true
+  const readingTrue = book.filter((b) => b.reading === true);
+  if (bookReading === 1) {
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil ditampilkan',
+      // show data where reading is true
+      data: {
+        books: readingTrue.map((b) => ({ id: b.id, name: b.name, publisher: b.publisher })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+  // read books by reading false
+  const readingFalse = book.filter((b) => b.reading === false);
+  if (bookReading === 0) {
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil ditampilkan',
+      // show data where reading is false
+      data: {
+        books: readingFalse.map((b) => ({ id: b.id, name: b.name, publisher: b.publisher })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+  // read books by finished false
+  const finishedFalse = book.filter((b) => b.finished === false);
+  if (bookFinished === 0) {
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil ditampilkan',
+      data: {
+        books: finishedFalse.map((b) => ({ id: b.id, name: b.name, publisher: b.publisher })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
+  // read books by finished true
+  const finishedTrue = book.filter((b) => b.finished === true);
+  if (bookFinished === 1) {
+    const response = res.response({
+      status: 'success',
+      message: 'Buku berhasil ditampilkan',
+      data: {
+        books: finishedTrue.map((b) => ({ id: b.id, name: b.name, publisher: b.publisher })),
+      },
+    });
+    response.code(200);
+    return response;
+  }
   const response = res.response({
     status: 'success',
     data: {
